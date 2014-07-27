@@ -14,5 +14,20 @@
   },
   "os": [
     "darwin"
-  ]
+  ],
+  "devDependencies": {},
+  "author": "Wraithan <xwraithanx@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wraithan/osx-dialog.git"
+  },
+  "keywords": [
+    "dialog",
+    "osx",
+    "corefoundation"
+  ],
+  "bugs": {
+    "url": "https://github.com/wraithan/osx-dialog/issues"
+  },
+  "homepage": "https://github.com/wraithan/osx-dialog"
 }
