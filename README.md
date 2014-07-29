@@ -11,7 +11,12 @@ versions.
 ```JavaScript
 var dialog = require('osx-dialog')
 
-dialog('title', 'message')
+dialog({
+  title: 'A Title',
+  msg: 'some message',
+  box1: 'first checkbox',
+  box2: 'second checkbox'
+})
 ```
 
 ## todo
