@@ -3,16 +3,16 @@
 
 using namespace v8;
 
+CFMutableArrayRef convert_checkboxes(Local<Array>, int);
+
 NAN_METHOD(Show) {
     Local<Object> options(args[0]->ToObject());
     String::Utf8Value title(options->Get(String::NewSymbol("title"))->ToString());
     char *c_title = *title;
     String::Utf8Value msg(options->Get(String::NewSymbol("msg"))->ToString());
     char *c_msg = *msg;
-    String::Utf8Value box1(options->Get(String::NewSymbol("box1"))->ToString());
-    char *c_box1 = *box1;
-    String::Utf8Value box2(options->Get(String::NewSymbol("box2"))->ToString());
-    char *c_box2 = *box2;
+    Local<Array> checkboxes = Local<Array>::Cast(options->Get(String::NewSymbol("checkboxes")));
+    int checkbox_len = checkboxes->Length();
 
     SInt32 err = 0;
 
@@ -26,11 +26,11 @@ NAN_METHOD(Show) {
                          CFStringCreateWithCString(NULL, c_msg, kCFStringEncodingUTF8));
 
     // Checkbox array
-    CFMutableArrayRef array = CFArrayCreateMutable(NULL, 0, NULL);
-    CFArrayAppendValue(array, CFStringCreateWithCString(NULL, c_box1, kCFStringEncodingUTF8));
-    CFArrayAppendValue(array, CFStringCreateWithCString(NULL, c_box2, kCFStringEncodingUTF8));
-    CFDictionarySetValue(dict, kCFUserNotificationCheckBoxTitlesKey, array);
-    CFRelease(array);
+    if (!checkboxes->IsUndefined() && checkbox_len > 0) {
+        CFMutableArrayRef array = convert_checkboxes(checkboxes, checkbox_len);
+        CFDictionarySetValue(dict, kCFUserNotificationCheckBoxTitlesKey, array);
+        CFRelease(array);
+    }
 
     // Set the flags
     CFOptionFlags flags = kCFUserNotificationPlainAlertLevel;
@@ -46,3 +46,13 @@ void Init(Handle<Object> exports) {
 }
 
 NODE_MODULE(dialog, Init)
+
+CFMutableArrayRef convert_checkboxes(Local<Array> checkboxes, int len) {
+    CFMutableArrayRef array = CFArrayCreateMutable(NULL, 0, NULL);
+    for (int i = 0; i < len; i++) {
+        String::Utf8Value box(checkboxes->Get(i)->ToString());
+        char *c_box = *box;
+        CFArrayAppendValue(array, CFStringCreateWithCString(NULL, c_box, kCFStringEncodingUTF8));
+    }
+    return array;
+}

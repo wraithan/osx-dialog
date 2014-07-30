@@ -14,10 +14,14 @@ var dialog = require('osx-dialog')
 dialog({
   title: 'A Title',
   msg: 'some message',
-  box1: 'first checkbox',
-  box2: 'second checkbox'
+  checkboxes: [
+    'first box',
+    'second box'
+  ]
 })
 ```
+
+`title` and `msg` are required, `checkboxes` is optional.
 
 ## todo
 
