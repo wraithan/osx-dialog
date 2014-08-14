@@ -18,13 +18,18 @@ dialog({
     'first box',
     'second box'
   ]
+}, function (button, checkbox1, checkbox2) {
+	// do stuff with the result.
 })
 ```
 
-`title` and `msg` are required, `checkboxes` is optional.
+In the options object `title` and `msg` are required, `checkboxes` is optional.
+The second argument, `callback` is required for now but should change in the
+future.
 
 ## todo
 
 - [ ] Be able to set the buttons.
 - [ ] Be able to use radio types.
-- [ ] Be able to get the result.
+- [ ] Make callback optional.
+- [ ] Make callback detect the number of checkboxes and only add enough bools that.
