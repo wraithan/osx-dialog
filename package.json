@@ -1,6 +1,6 @@
 {
   "name": "osx-dialog",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Creates a dialog to the user.",
   "main": "index.js",
   "scripts": {
