@@ -18,7 +18,7 @@ dialog({
     'first box',
     'second box'
   ]
-}, function (button, checkbox1, checkbox2) {
+}, function (button, checkbox_array) {
 	// do stuff with the result.
 })
 ```
@@ -32,4 +32,3 @@ future.
 - [ ] Be able to set the buttons.
 - [ ] Be able to use radio types.
 - [ ] Make callback optional.
-- [ ] Make callback detect the number of checkboxes and only add enough bools that.
