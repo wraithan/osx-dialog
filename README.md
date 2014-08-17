@@ -24,11 +24,10 @@ dialog({
 ```
 
 In the options object `title` and `msg` are required, `checkboxes` is optional.
-The second argument, `callback` is required for now but should change in the
-future.
+The second argument, `callback` is an optional callback that takes the status of
+the default button and an array of the checkbox statuses.
 
 ## todo
 
 - [ ] Be able to set the buttons.
 - [ ] Be able to use radio types.
-- [ ] Make callback optional.

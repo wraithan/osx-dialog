@@ -108,7 +108,9 @@ NAN_METHOD(Show) {
 
   // Cast the callback and pass it to the queue worker.
   NanCallback *callback = new NanCallback(args[1].As<v8::Function>());
-  NanAsyncQueueWorker(new DialogWorker(callback, un, checkbox_len));
+  if (!callback->IsEmpty()) {
+    NanAsyncQueueWorker(new DialogWorker(callback, un, checkbox_len));
+  }
 
   NanReturnUndefined();
 }
