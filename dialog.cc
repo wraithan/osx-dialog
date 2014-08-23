@@ -1,6 +1,5 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <nan.h>
-#include <iostream>
 
 using v8::Local;
 using v8::Array;
@@ -12,25 +11,36 @@ CFMutableArrayRef convert_checkboxes(Local<Array>, int);
 
 class DialogWorker : public NanAsyncWorker {
   public:
-    DialogWorker(NanCallback *callback, CFUserNotificationRef un, int boxCount)
-      : NanAsyncWorker(callback), un(un), boxCount(boxCount) {}
+    DialogWorker(NanCallback *callback, CFUserNotificationRef un, int boxCount, int timeout)
+      : NanAsyncWorker(callback), un(un), boxCount(boxCount), timeout(timeout) {}
     ~DialogWorker() {}
 
     // v8 stuff is not available
     void Execute () {
-      error = CFUserNotificationReceiveResponse(un, 0, &flags);
+      error = CFUserNotificationReceiveResponse(un, timeout, &flags);
     }
 
     // v8 stuff is available.
     void HandleOKCallback () {
       NanScope();
+      if (error != 0) {
+        CFUserNotificationCancel(un);
+
+        Local<Value> argv[] = {
+          NanNew<String>("timeout")
+        };
+        callback->Call(1, argv);
+        return;
+      }
+
       bool dismissal = (flags & 0x3) == 0;
 
       if (boxCount == 0) {
         Local<Value> argv[] = {
+          NanNull(),
           NanNew<v8::Boolean>(dismissal)
         };
-        callback->Call(1, argv);
+        callback->Call(2, argv);
 
       } else {
         Local<Array> boxes = NanNew<Array>(boxCount);
@@ -41,10 +51,11 @@ class DialogWorker : public NanAsyncWorker {
         }
 
         Local<Value> argv[] = {
+          NanNull(),
           NanNew<v8::Boolean>(dismissal),
           boxes
         };
-        callback->Call(2, argv);
+        callback->Call(3, argv);
       }
     };
 
@@ -52,6 +63,7 @@ class DialogWorker : public NanAsyncWorker {
     CFUserNotificationRef un;
     CFOptionFlags flags;
     int boxCount;
+    int timeout;
     SInt32 error;
 };
 
@@ -76,11 +88,16 @@ NAN_METHOD(Show) {
   String::Utf8Value msg(options->Get(String::NewSymbol("msg"))->ToString());
   char *c_msg = *msg;
   Local<Array> checkboxes = Local<Array>::Cast(options->Get(String::NewSymbol("checkboxes")));
+  Local<Value> timeoutThing = (options->Get(String::NewSymbol("timeout")));
+  int timeout = 0;
+  if (!timeoutThing->IsUndefined() && timeoutThing->IsNumber()) {
+    timeout = timeoutThing->Int32Value();
+  }
+
   int checkbox_len = 0;
   if (!checkboxes->IsUndefined()) {
     checkbox_len = checkboxes->Length();
   }
-
 
   SInt32 err = 0;
 
@@ -104,12 +121,12 @@ NAN_METHOD(Show) {
   CFOptionFlags flags = kCFUserNotificationPlainAlertLevel;
 
   // Display the dialog
-  CFUserNotificationRef un = CFUserNotificationCreate(NULL, 0.0, flags, &err, dict);
+  CFUserNotificationRef un = CFUserNotificationCreate(NULL, 0, flags, &err, dict);
 
   // Cast the callback and pass it to the queue worker.
   NanCallback *callback = new NanCallback(args[1].As<v8::Function>());
   if (!callback->IsEmpty()) {
-    NanAsyncQueueWorker(new DialogWorker(callback, un, checkbox_len));
+    NanAsyncQueueWorker(new DialogWorker(callback, un, checkbox_len, timeout));
   }
 
   NanReturnUndefined();

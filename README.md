@@ -14,18 +14,27 @@ var dialog = require('osx-dialog')
 dialog({
   title: 'A Title',
   msg: 'some message',
+  timeout: 10,
   checkboxes: [
     'first box',
     'second box'
   ]
-}, function (button, checkbox_array) {
+}, function (error, button, checkboxes) {
 	// do stuff with the result.
 })
 ```
 
-In the options object `title` and `msg` are required, `checkboxes` is optional.
-The second argument, `callback` is an optional callback that takes the status of
-the default button and an array of the checkbox statuses.
+###`dialog(options, [callback])`
+
+* **`options`** (required) has the following keys
+  * **`title`** (required) is the bolded portion of the dialog
+  * **`message`** (required) is the text area portion of the dialog
+  * **`timeout`** (optional) is the duration the dialog should be displayed before it is dismissed
+  * **`checkboxes`** (optional) is an array of strings that will be displayed as checkboxes
+* **`callback`** (optional) has the signature callback(error, button, checkboxes)
+  * **`error`** will be `null` or a string with the error message
+  * **`button`** will be a boolean noting if it was dismissed by hitting the button (`true`) or dismissed by hitting escape (`false`)
+  * **`checkboxes`** will be an array of booleans with the status of the checkboxes in the order that was given to `dialog`
 
 ## todo
 
