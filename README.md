@@ -31,7 +31,7 @@ dialog({
   * **`message`** (required) is the text area portion of the dialog
   * **`timeout`** (optional) is the duration the dialog should be displayed before it is dismissed
   * **`checkboxes`** (optional) is an array of strings that will be displayed as checkboxes
-* **`callback`** (optional) has the signature callback(error, button, checkboxes)
+* **`callback`** (optional) has the signature `callback(error, button, checkboxes)`
   * **`error`** will be `null` or a string with the error message
   * **`button`** will be a boolean noting if it was dismissed by hitting the button (`true`) or dismissed by hitting escape (`false`)
   * **`checkboxes`** will be an array of booleans with the status of the checkboxes in the order that was given to `dialog`
