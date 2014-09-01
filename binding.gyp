@@ -3,7 +3,8 @@
 		{
 			"target_name": "dialog",
 			"sources": [
-				"dialog.cc"
+				"src/dialog.cc",
+				"src/dialog-worker.cc"
 			],
 			"include_dirs": [
 				"<!(node -e \"require('nan')\")",
